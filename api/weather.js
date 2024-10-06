@@ -1,6 +1,6 @@
 // /api/weather.js
 
-const fetch = require('node-fetch'); // Ensure node-fetch is installed if using in Node.js
+const fetch = require('node-fetch'); // If using Node.js < 18
 
 module.exports = async (req, res) => {
     // Add CORS headers to allow requests from all origins (for demo purposes, we allow '*')
@@ -8,7 +8,7 @@ module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Methods', 'GET'); // Allow only GET requests
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-    const { lat, lon } = req.query;
+    const { lat, lon, type = 'weather' } = req.query;
 
     // Replace with your OpenWeatherMap API key
     const apiKey = process.env.OPENWEATHER_API_KEY;
@@ -17,7 +17,14 @@ module.exports = async (req, res) => {
         return res.status(400).json({ error: 'Please provide lat and lon parameters' });
     }
 
-    const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}`;
+    let weatherUrl;
+    if (type === 'forecast') {
+        // Fetch 5-day forecast data
+        weatherUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}`;
+    } else {
+        // Fetch current weather data
+        weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}`;
+    }
 
     console.log(weatherUrl);
 
