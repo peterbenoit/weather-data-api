@@ -19,6 +19,8 @@ module.exports = async (req, res) => {
 
     const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}`;
 
+    console.log(weatherUrl);
+
     try {
         const response = await fetch(weatherUrl);
         const data = await response.json();
