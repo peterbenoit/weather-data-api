@@ -7,23 +7,38 @@ module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET'); // Allow only GET requests
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-    const { lat, lon, type = 'weather' } = req.query;
+    const { lat, lon, type = 'weather', q } = req.query;
 
     // Replace with your OpenWeatherMap API key
     const apiKey = process.env.OPENWEATHER_API_KEY;
 
-    if (!lat || !lon) {
-        return res.status(400).json({ error: 'Please provide lat and lon parameters' });
+    // Ensure either lat/lon or q parameter is provided
+    if ((!lat || !lon) && !q) {
+        return res
+            .status(400)
+            .json({ error: 'Please provide either lat and lon parameters, or a q parameter' });
     }
 
     let weatherUrl;
-    if (type === 'forecast') {
-        // Fetch 5-day forecast data
-        weatherUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}`;
+
+    if (q) {
+        // Fetch weather data for a city
+        if (type === 'forecast') {
+            // Fetch 5-day forecast data
+            weatherUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${q}&units=imperial&appid=${apiKey}`;
+        } else {
+            // Fetch current weather data
+            weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${q}&units=imperial&appid=${apiKey}`;
+        }
     } else {
-        // Fetch current weather data
-        weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}`;
+        // Fetch weather data for a location
+        if (type === 'forecast') {
+            // Fetch 5-day forecast data
+            weatherUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}`;
+        } else {
+            // Fetch current weather data
+            weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}`;
+        }
     }
 
     console.log(weatherUrl);
