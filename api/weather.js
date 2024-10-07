@@ -1,18 +1,13 @@
-// /api/weather.js
-
-const fetch = require('node-fetch'); // If using Node.js < 18
+const fetch = require('node-fetch');
 
 module.exports = async (req, res) => {
-    // Add CORS headers to allow requests from all origins (for demo purposes, we allow '*')
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET'); // Allow only GET requests
+    res.setHeader('Access-Control-Allow-Methods', 'GET');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     const { lat, lon, type = 'weather', q } = req.query;
 
-    // Replace with your OpenWeatherMap API key
     const apiKey = process.env.OPENWEATHER_API_KEY;
 
-    // Ensure either lat/lon or q parameter is provided
     if ((!lat || !lon) && !q) {
         return res
             .status(400)
@@ -22,21 +17,15 @@ module.exports = async (req, res) => {
     let weatherUrl;
 
     if (q) {
-        // Fetch weather data for a city
         if (type === 'forecast') {
-            // Fetch 5-day forecast data
             weatherUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${q}&units=imperial&appid=${apiKey}`;
         } else {
-            // Fetch current weather data
             weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${q}&units=imperial&appid=${apiKey}`;
         }
     } else {
-        // Fetch weather data for a location
         if (type === 'forecast') {
-            // Fetch 5-day forecast data
             weatherUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}`;
         } else {
-            // Fetch current weather data
             weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}`;
         }
     }
@@ -48,7 +37,7 @@ module.exports = async (req, res) => {
         const data = await response.json();
 
         if (response.ok) {
-            res.status(200).json(data); // Send the weather data
+            res.status(200).json(data);
         } else {
             res.status(500).json({ error: 'Error fetching weather data', details: data });
         }

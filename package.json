@@ -1,5 +1,5 @@
 {
-  "repository": "https://github.com/vercel/examples.git",
+  "repository": "https://github.com/peterbenoit/weather-data-api.git",
   "license": "MIT",
   "private": true,
   "devDependencies": {
